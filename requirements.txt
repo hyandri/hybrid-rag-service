@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+langchain
+langchain-community
+langchain-google-genai
+langchain-groq
+pinecone-client
+rank_bm25
+coherec
+pydantic
+python-dotenv
+pypdf
+langchain-pinecone
+langchain-cohere
