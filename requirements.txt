@@ -12,3 +12,4 @@ python-dotenv
 pypdf
 langchain-pinecone
 langchain-cohere
+langchain-huggingface[full]

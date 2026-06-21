@@ -2,3 +2,6 @@
 __pycache__/
 .pytest_cache/
 data/
+pmc_cardiology_oncology.json
+pubmed_abstracts.json
+datascrap.py

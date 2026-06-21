@@ -1,3 +1,4 @@
+#main.py
 import os
 from fastapi import FastAPI
 from pydantic import BaseModel
@@ -27,7 +28,9 @@ class QueryRequest(BaseModel):
 @app.post("/query")
 async def run_rag(request: QueryRequest):
     # Retrieve relevant contexts using hybrid logic + reranker
-    relevant_docs = retrieverEngine.get_relevant_documents(request.question)
+    relevant_docs = retrieverEngine.get_relevant_documents(
+    request.question
+)
     
     # Generate response with strictly verified inline citations
     answer = generatorEngine.generate_answer(request.question, relevant_docs)
