@@ -1,29 +1,92 @@
-#ingest.py
+# app/ingest.py
+import json
 import os
-from langchain_community.document_loaders import DirectoryLoader, PyPDFLoader, TextLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.schema import Document
 
-def load_and_chunk_docs(data_directory="data"):
-    if not os.path.exists(data_directory):
-        os.makedirs(data_directory)
-    
-    if len(os.listdir(data_directory)) == 0:
-        print(f" Warning: '{data_directory}/' folder is empty! Generating a sample file for testing...")
-        # Create a sample file so the retrievers have something to index
-        fallback_path = os.path.join(data_directory, "sample_policy.txt")
-        with open(fallback_path, "w") as f:
-            f.write(
-                "Company policy requires all employees to complete security training by Q3.\n"
-                "For expense reimbursements, submit all receipts via the portal before the 25th of each month."
-            )
-    
-    loader = DirectoryLoader(data_directory, glob="**/*.pdf", loader_cls=PyPDFLoader)
-    documents = loader.load()
+def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
+    if not os.path.exists(json_path):
+        raise FileNotFoundError(f"Cannot find {json_path}")
 
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size = 600,
-        chunk_overlap = 100
-    )
+    with open(json_path, "r") as f:
+        papers = json.load(f)
 
-    chunks = text_splitter.split_documents(documents)
+    print(f"Loaded {len(papers)} papers from {json_path}")
+
+    chunks = []
+
+    for paper in papers:
+        pmcid    = paper.get("pmcid", "unknown")
+        title    = paper.get("title", "")
+        journal  = paper.get("journal", "")
+        doi      = paper.get("doi", "")
+        keywords = ", ".join(paper.get("keywords", []))
+        abstract = paper.get("abstract", "")
+        sections = paper.get("sections", {})
+
+        # Base metadata shared across all chunks of this paper
+        base_metadata = {
+            "source":   pmcid,
+            "title":    title,
+            "journal":  journal,
+            "doi":      doi,
+            "keywords": keywords,
+        }
+
+        # 1. Abstract as its own chunk
+        if abstract.strip():
+            chunks.append(Document(
+                page_content=f"Title: {title}\n\nAbstract:\n{abstract}",
+                metadata={**base_metadata, "section": "abstract"}
+            ))
+
+        # 2. Each section as its own chunk
+        for section_name, section_text in sections.items():
+            if not section_text.strip():
+                continue
+
+            # Split long sections (>1000 chars) into sub-chunks
+            sub_chunks = split_text(section_text, chunk_size=600, overlap=100)
+
+            for j, sub in enumerate(sub_chunks):
+                chunk_text = (
+                    f"Title: {title}\n"
+                    f"Section: {section_name}\n\n"
+                    f"{sub}"
+                )
+                chunks.append(Document(
+                    page_content=chunk_text,
+                    metadata={
+                        **base_metadata,
+                        "section":   section_name,
+                        "chunk_idx": j
+                    }
+                ))
+
+    print(f"Total chunks created: {len(chunks)}")
     return chunks
+
+
+def split_text(text: str, chunk_size: int = 600, overlap: int = 100) -> list[str]:
+    """Simple character-level splitter that respects sentence boundaries roughly."""
+    if len(text) <= chunk_size:
+        return [text]
+
+    chunks = []
+    start = 0
+    while start < len(text):
+        end = start + chunk_size
+
+        # Try to break at sentence boundary
+        if end < len(text):
+            # Look for last period/newline before end
+            break_at = max(
+                text.rfind(". ", start, end),
+                text.rfind("\n", start, end)
+            )
+            if break_at > start + overlap:
+                end = break_at + 1
+
+        chunks.append(text[start:end].strip())
+        start = end - overlap
+
+    return [c for c in chunks if c.strip()]
