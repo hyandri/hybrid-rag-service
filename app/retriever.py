@@ -1,4 +1,4 @@
-#retriever.py
+# app/retriever.py
 import os
 from langchain_community.retrievers import BM25Retriever
 from langchain_pinecone import PineconeVectorStore
@@ -9,48 +9,88 @@ from langchain_cohere import CohereRerank
 class HybridRAGRetriever:
     def __init__(self, documents):
         self.docs = documents
-        
-        # 1. Initialize Local Hugging Face Embeddings
-        print("Loading local Hugging Face embedding model...")
-        self.embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-        
+
+        # ── 1. Embeddings ────────────────────────────────────────────────
+        print("Loading HuggingFace embedding model...")
+        self.embeddings = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/all-MiniLM-L6-v2"
+        )
+
+        # ── 2. Pinecone setup ────────────────────────────────────────────
         self.pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
         index_name = "hybrid-rag-portfolio-hf"
-        
         existing_indexes = [idx.name for idx in self.pc.list_indexes()]
+
         if index_name not in existing_indexes:
-            print("Creating a new Pinecone Index...")
+            print("Creating new Pinecone index...")
             self.pc.create_index(
                 name=index_name,
-                dimension=384, # Hugging Face MiniLM vectors are 384 dimensions
-                metric='cosine',
-                spec=ServerlessSpec(cloud='aws', region='us-east-1')
+                dimension=384,
+                metric="cosine",
+                spec=ServerlessSpec(cloud="aws", region="us-east-1")
             )
-        
-        # Store docs in Pinecone Vector Store
-        print(f"Generating embeddings and uploading {len(self.docs)} chunks to Pinecone...")
-        self.vector_store = PineconeVectorStore.from_documents(
-            self.docs, self.embeddings, index_name=index_name
-        )
-        self.vector_retriever = self.vector_store.as_retriever(search_kwargs={"k": 10})
+            self._upsert_documents(index_name)
+        else:
+            # Check if index is empty or already populated
+            index = self.pc.Index(index_name)
+            stats = index.describe_index_stats()
+            total_vectors = stats.get("total_vector_count", 0)
 
-        # 2. Initialize BM25 Retriever (Sparse)
+            if total_vectors == 0:
+                print("Index exists but is empty — upserting documents...")
+                self._upsert_documents(index_name)
+            else:
+                print(f"Index already has {total_vectors} vectors — skipping upsert.")
+
+        self.vector_store = PineconeVectorStore(
+            index=self.pc.Index(index_name),
+            embedding=self.embeddings
+        )
+        self.vector_retriever = self.vector_store.as_retriever(
+            search_kwargs={"k": 10}
+        )
+
+        # ── 3. BM25 ──────────────────────────────────────────────────────
+        print("Building BM25 index...")
         self.bm25_retriever = BM25Retriever.from_documents(self.docs)
         self.bm25_retriever.k = 10
 
-        # 3. Setup Cohere Reranker with explicit model parameter
-        print("Initializing Cohere Reranker model...")
+        # ── 4. Cohere Reranker ───────────────────────────────────────────
+        print("Initializing Cohere reranker...")
         self.compressor = CohereRerank(
-            cohere_api_key=os.getenv("COHERE_API_KEY"), 
-            model="rerank-english-v3.0", 
-            top_n=3
+            cohere_api_key=os.getenv("COHERE_API_KEY"),
+            model="rerank-english-v3.0",
+            top_n=5
         )
 
+    def _upsert_documents(self, index_name):
+        """Upload documents to Pinecone in batches."""
+        print(f"Upserting {len(self.docs)} chunks to Pinecone...")
+        BATCH_SIZE = 100
+        for i in range(0, len(self.docs), BATCH_SIZE):
+            batch = self.docs[i: i + BATCH_SIZE]
+            PineconeVectorStore.from_documents(
+                batch,
+                self.embeddings,
+                index_name=index_name
+            )
+            print(f"  Uploaded batch {i // BATCH_SIZE + 1} / {-(-len(self.docs) // BATCH_SIZE)}")
+        print("Upsert complete.")
+
     def get_relevant_documents(self, query: str):
+        # Dense retrieval
         vector_results = self.vector_retriever.invoke(query)
+
+        # Sparse retrieval
         bm25_results = self.bm25_retriever.invoke(query)
-        
-        all_docs = list({doc.page_content: doc for doc in (vector_results + bm25_results)}.values())
-        
-        reranked_docs = self.compressor.compress_documents(all_docs, query)
-        return reranked_docs
+
+        # Merge, deduplicate by content
+        all_docs = list(
+            {doc.page_content: doc for doc in (vector_results + bm25_results)}.values()
+        )
+        print(f"  Hybrid pool: {len(all_docs)} docs before rerank")
+
+        # Cohere rerank
+        reranked = self.compressor.compress_documents(all_docs, query)
+        print(f"  After rerank: {len(reranked)} docs returned")
+        return reranked

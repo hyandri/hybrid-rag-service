@@ -1,7 +1,7 @@
 # app/ingest.py
 import json
 import os
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
     if not os.path.exists(json_path):

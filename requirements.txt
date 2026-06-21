@@ -1,12 +1,12 @@
 fastapi
 uvicorn
 langchain
+langchain-core
 langchain-community
-langchain-google-genai
 langchain-groq
 pinecone-client
 rank_bm25
-coherec
+cohere
 pydantic
 python-dotenv
 pypdf
