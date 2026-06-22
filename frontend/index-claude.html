@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biomedical Research Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #21262d;
+      --teal:      #2dd4bf;
+      --teal-dim:  #134e4a;
+      --text:      #e6edf3;
+      --muted:     #7d8590;
+      --user-bg:   #1c2128;
+      --ai-bg:     #161b22;
+      --mono:      'JetBrains Mono', monospace;
+      --sans:      'Inter', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── Layout ── */
+    .app {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      gap: 24px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--teal-dim);
+      border: 1px solid var(--teal);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-icon svg { width: 16px; height: 16px; stroke: var(--teal); fill: none; stroke-width: 2; }
+
+    .logo-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    .new-chat-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      width: 100%;
+    }
+
+    .new-chat-btn:hover {
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+
+    .new-chat-btn svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; flex-shrink: 0; }
+
+    .sidebar-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .stack-pills {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: var(--bg);
+      border-radius: 5px;
+      font-size: 12px;
+    }
+
+    .pill-name { color: var(--muted); }
+    .pill-val  { color: var(--teal); font-family: var(--mono); font-size: 11px; }
+
+    .sidebar-bottom {
+      margin-top: auto;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .session-id {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--teal-dim);
+      word-break: break-all;
+      margin-top: 4px;
+    }
+
+    /* ── Main chat area ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* thin teal accent line at top */
+    .top-accent {
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal) 0%, transparent 60%);
+      flex-shrink: 0;
+    }
+
+    /* ── Messages ── */
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 0;
+      scroll-behavior: smooth;
+    }
+
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-track { background: transparent; }
+    .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .message-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .message {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 28px;
+      animation: fadeUp 0.2s ease;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar {
+      width: 30px;
+      height: 30px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .avatar-user {
+      background: #1f2d3d;
+      border: 1px solid #2d4a6b;
+      color: #5b9bd5;
+    }
+
+    .avatar-ai {
+      background: var(--teal-dim);
+      border: 1px solid var(--teal);
+    }
+
+    .avatar-ai svg { width: 14px; height: 14px; stroke: var(--teal); fill: none; stroke-width: 2; }
+
+    .message-body { flex: 1; min-width: 0; }
+
+    .message-role {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    .message-text {
+      color: var(--text);
+      line-height: 1.75;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* inline citation styling */
+    .message-text .cite {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--teal);
+      background: var(--teal-dim);
+      padding: 1px 5px;
+      border-radius: 3px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .message-text .cite:hover { opacity: 0.8; }
+
+    /* ── Sources ── */
+    .sources {
+      margin-top: 14px;
+      border-top: 1px solid var(--border);
+      padding-top: 12px;
+    }
+
+    .sources-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .source-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .source-dot {
+      width: 5px;
+      height: 5px;
+      background: var(--teal);
+      border-radius: 50%;
+      margin-top: 7px;
+      flex-shrink: 0;
+    }
+
+    .source-link {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      line-height: 1.5;
+      transition: color 0.15s;
+    }
+
+    .source-link:hover { color: var(--teal); }
+
+    .source-pmcid {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--teal);
+      margin-right: 6px;
+    }
+
+    .source-section {
+      font-size: 10px;
+      color: var(--teal-dim);
+      background: var(--bg);
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin-left: 4px;
+      font-family: var(--mono);
+    }
+
+    /* ── Typing indicator ── */
+    .typing-indicator {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .typing-dots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 0;
+    }
+
+    .typing-dots span {
+      width: 5px;
+      height: 5px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes pulse {
+      0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+      40%            { opacity: 1;   transform: scale(1); }
+    }
+
+    .typing-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: 4px;
+      align-self: center;
+      font-style: italic;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      max-width: 560px;
+      margin: 60px auto 0;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--teal-dim);
+      border: 1px solid var(--teal);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .empty-icon svg { width: 22px; height: 22px; stroke: var(--teal); fill: none; stroke-width: 1.5; }
+
+    .empty-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .empty-sub {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .sample-questions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      text-align: left;
+    }
+
+    .sample-q {
+      padding: 10px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      line-height: 1.5;
+    }
+
+    .sample-q:hover {
+      border-color: var(--teal);
+      color: var(--text);
+    }
+
+    /* ── Input area ── */
+    .input-area {
+      border-top: 1px solid var(--border);
+      padding: 16px 24px 20px;
+      background: var(--bg);
+    }
+
+    .input-wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      transition: border-color 0.15s;
+    }
+
+    .input-wrap:focus-within { border-color: var(--teal); }
+
+    #question {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.6;
+      resize: none;
+      max-height: 160px;
+      overflow-y: auto;
+    }
+
+    #question::placeholder { color: var(--muted); }
+
+    #question::-webkit-scrollbar { width: 3px; }
+    #question::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .send-btn {
+      width: 34px;
+      height: 34px;
+      background: var(--teal);
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: opacity 0.15s;
+    }
+
+    .send-btn:hover   { opacity: 0.85; }
+    .send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .send-btn svg { width: 15px; height: 15px; stroke: #0d1117; fill: none; stroke-width: 2.5; }
+
+    .input-hint {
+      max-width: 760px;
+      margin: 8px auto 0;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 640px) {
+      .sidebar { display: none; }
+      .sample-questions { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"/></svg>
+      </div>
+      <div>
+        <div class="logo-text">Research Assistant</div>
+        <div class="logo-sub">Biomedical RAG</div>
+      </div>
+    </div>
+
+    <button class="new-chat-btn" onclick="newChat()">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      New conversation
+    </button>
+
+    <div>
+      <div class="sidebar-section-label" style="margin-bottom:10px">Stack</div>
+      <div class="stack-pills">
+        <div class="pill"><span class="pill-name">Retrieval</span><span class="pill-val">Pinecone + BM25</span></div>
+        <div class="pill"><span class="pill-name">Reranker</span><span class="pill-val">Cohere v3</span></div>
+        <div class="pill"><span class="pill-name">Generator</span><span class="pill-val">LLaMA 3.3 70B</span></div>
+        <div class="pill"><span class="pill-name">Corpus</span><span class="pill-val">408 papers</span></div>
+        <div class="pill"><span class="pill-name">Chunks</span><span class="pill-val">22,824</span></div>
+      </div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div>Session</div>
+      <div class="session-id" id="session-display">—</div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="top-accent"></div>
+
+    <div class="messages" id="messages">
+      <!-- Empty state -->
+      <div class="message-wrap">
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="empty-title">Biomedical Research Assistant</div>
+          <div class="empty-sub">Ask questions across 408 full-text research papers.<br/>Answers are cited, synthesized, and grounded in literature.</div>
+          <div class="sample-questions">
+            <div class="sample-q" onclick="useQuestion(this)">What is the role of TNF-α in myocardial infarction?</div>
+            <div class="sample-q" onclick="useQuestion(this)">How do nanoparticles cross the blood-brain barrier in Alzheimer's disease?</div>
+            <div class="sample-q" onclick="useQuestion(this)">What study designs are used in randomized trials for cardiac interventions?</div>
+            <div class="sample-q" onclick="useQuestion(this)">How does chemotherapy resistance develop in carcinoma cells?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrap">
+        <textarea
+          id="question"
+          rows="1"
+          placeholder="Ask a research question..."
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+      <div class="input-hint">Hybrid RAG · Dense + Sparse retrieval · Cohere reranking · Shift+Enter for new line</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let sessionId  = null;
+  let isLoading  = false;
+
+  const messagesEl  = document.getElementById('messages');
+  const questionEl  = document.getElementById('question');
+  const sendBtn     = document.getElementById('send-btn');
+  const emptyState  = document.getElementById('empty-state');
+  const sessionDisp = document.getElementById('session-display');
+
+  // ── Auto-resize textarea ──────────────────────────────────────────────────
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 160) + 'px';
+  }
+
+  // ── Enter to send ─────────────────────────────────────────────────────────
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  // ── Sample question click ─────────────────────────────────────────────────
+  function useQuestion(el) {
+    questionEl.value = el.textContent;
+    autoResize(questionEl);
+    questionEl.focus();
+  }
+
+  // ── New chat ──────────────────────────────────────────────────────────────
+  function newChat() {
+    sessionId = null;
+    sessionDisp.textContent = '—';
+    // clear messages, restore empty state
+    messagesEl.innerHTML = `
+      <div class="message-wrap">
+        <div class="empty-state" id="empty-state">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="empty-title">Biomedical Research Assistant</div>
+          <div class="empty-sub">Ask questions across 408 full-text research papers.<br/>Answers are cited, synthesized, and grounded in literature.</div>
+          <div class="sample-questions">
+            <div class="sample-q" onclick="useQuestion(this)">What is the role of TNF-α in myocardial infarction?</div>
+            <div class="sample-q" onclick="useQuestion(this)">How do nanoparticles cross the blood-brain barrier in Alzheimer's disease?</div>
+            <div class="sample-q" onclick="useQuestion(this)">What study designs are used in randomized trials for cardiac interventions?</div>
+            <div class="sample-q" onclick="useQuestion(this)">How does chemotherapy resistance develop in carcinoma cells?</div>
+          </div>
+        </div>
+      </div>`;
+    questionEl.value = '';
+    autoResize(questionEl);
+  }
+
+  // ── Render citations as teal links ────────────────────────────────────────
+  function renderCitations(text) {
+    return text.replace(/\[PMC(\d+)\]/g, (match, id) => {
+      const url = `https://pmc.ncbi.nlm.nih.gov/articles/PMC${id}/`;
+      return `<a class="cite" href="${url}" target="_blank" rel="noopener">[PMC${id}]</a>`;
+    });
+  }
+
+  // ── Append a message bubble ───────────────────────────────────────────────
+  function appendMessage(role, text, sources = []) {
+    // remove empty state on first message
+    const es = document.getElementById('empty-state');
+    if (es) es.remove();
+
+    const wrap = document.createElement('div');
+    wrap.className = 'message-wrap';
+
+    const msg = document.createElement('div');
+    msg.className = 'message';
+
+    // avatar
+    const av = document.createElement('div');
+    av.className = `avatar avatar-${role === 'user' ? 'user' : 'ai'}`;
+    if (role === 'user') {
+      av.textContent = 'You';
+    } else {
+      av.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+    }
+
+    // body
+    const body = document.createElement('div');
+    body.className = 'message-body';
+
+    const roleLabel = document.createElement('div');
+    roleLabel.className = 'message-role';
+    roleLabel.textContent = role === 'user' ? 'You' : 'Research Assistant';
+
+    const textEl = document.createElement('div');
+    textEl.className = 'message-text';
+    textEl.innerHTML = renderCitations(escapeHtml(text));
+
+    body.appendChild(roleLabel);
+    body.appendChild(textEl);
+
+    // sources
+    if (sources && sources.length > 0) {
+      const sourcesEl = document.createElement('div');
+      sourcesEl.className = 'sources';
+
+      const label = document.createElement('div');
+      label.className = 'sources-label';
+      label.textContent = `${sources.length} source${sources.length > 1 ? 's' : ''}`;
+      sourcesEl.appendChild(label);
+
+      sources.forEach(s => {
+        const item = document.createElement('div');
+        item.className = 'source-item';
+
+        const dot = document.createElement('div');
+        dot.className = 'source-dot';
+
+        const link = document.createElement('a');
+        link.className = 'source-link';
+        link.href = s.url || '#';
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.innerHTML = `<span class="source-pmcid">${s.pmcid || ''}</span>${escapeHtml(s.title || 'Unknown title')}<span class="source-section">${s.section || ''}</span>`;
+
+        item.appendChild(dot);
+        item.appendChild(link);
+        sourcesEl.appendChild(item);
+      });
+
+      body.appendChild(sourcesEl);
+    }
+
+    msg.appendChild(av);
+    msg.appendChild(body);
+    wrap.appendChild(msg);
+    messagesEl.appendChild(wrap);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  // ── Typing indicator ──────────────────────────────────────────────────────
+  function showTyping() {
+    const es = document.getElementById('empty-state');
+    if (es) es.remove();
+
+    const wrap = document.createElement('div');
+    wrap.className = 'message-wrap';
+    wrap.id = 'typing-wrap';
+
+    wrap.innerHTML = `
+      <div class="typing-indicator">
+        <div class="avatar avatar-ai">
+          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding-top:6px">
+          <div class="typing-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="typing-label">Retrieving from literature...</div>
+        </div>
+      </div>`;
+
+    messagesEl.appendChild(wrap);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function hideTyping() {
+    const el = document.getElementById('typing-wrap');
+    if (el) el.remove();
+  }
+
+  // ── HTML escape ───────────────────────────────────────────────────────────
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ── Send message ──────────────────────────────────────────────────────────
+  async function sendMessage() {
+    const question = questionEl.value.trim();
+    if (!question || isLoading) return;
+
+    isLoading = true;
+    sendBtn.disabled = true;
+    questionEl.value = '';
+    autoResize(questionEl);
+
+    appendMessage('user', question);
+    showTyping();
+
+    try {
+      const res = await fetch('http://127.0.0.1:8000/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question,
+          session_id: sessionId
+        })
+      });
+
+      if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
+      const data = await res.json();
+
+      // store session id
+      if (data.session_id) {
+        sessionId = data.session_id;
+        sessionDisp.textContent = sessionId.slice(0, 8) + '...';
+      }
+
+      hideTyping();
+      appendMessage('assistant', data.answer, data.sources || []);
+
+    } catch (err) {
+      hideTyping();
+      appendMessage('assistant', `Error: ${err.message}. Make sure the API server is running on port 8000.`);
+    } finally {
+      isLoading = false;
+      sendBtn.disabled = false;
+      questionEl.focus();
+    }
+  }
+</script>
+</body>
+</html>
