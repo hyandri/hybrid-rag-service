@@ -6,9 +6,18 @@ from dotenv import load_dotenv
 from app.ingest import load_and_chunk_docs
 from app.retriever import HybridRAGRetriever
 from app.generator import RAGGenerator
+from fastapi.middleware.cors import CORSMiddleware
 
 load_dotenv()
 app = FastAPI(title="Hybrid RAG — Cardiology & Oncology Research Assistant")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows any local frontend file to make requests
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 print("Loading and chunking documents...")
 raw_chunks = load_and_chunk_docs("pmc_cardiology_oncology.json")  # ← updated path

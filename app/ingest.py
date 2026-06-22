@@ -3,6 +3,50 @@ import json
 import os
 from langchain_core.documents import Document
 
+DOMAIN_KEYWORDS = {
+    "cardiology": [
+        "heart", "cardiac", "myocardial", "arrhythmia", "angioplasty",
+        "atherosclerosis", "cardiomyopathy", "echocardiography",
+        "electrocardiogram", "hypertension", "ischemia", "pericarditis",
+        "valvular", "ventricular"
+    ],
+    "oncology": [
+        "cancer", "tumor", "neoplasm", "metastasis", "chemotherapy",
+        "radiation therapy", "immunotherapy", "carcinoma",
+        "sarcoma", "leukemia", "lymphoma", "melanoma"
+    ],
+    "neuroscience":  [
+        "alzheimer", "neuron", "brain", "cognitive", "neuroinflammation", "dementia"
+    ],
+    "immunology":    ["cytokine", "inflammation", "immune", "TNF", "interleukin", "autoimmune"],
+    "reproductive":  ["ovary", "follicle", "estrous", "reproductive", "fertility", "oocyte"],
+}
+
+SKIP_SECTIONS = {
+    "supplementary information", "supplementary material",
+    "acknowledgements", "acknowledgments", "funding",
+    "competing interests", "author contributions",
+    "conflict of interest", "abbreviations", "references",
+    "data availability", "ethics"
+}
+
+def detect_domain(text: str) -> str:
+    text_lower = text.lower()
+    for domain, keywords in DOMAIN_KEYWORDS.items():
+        if any(kw in text_lower for kw in keywords):
+            return domain
+    return "general"
+
+def extract_year(paper: dict) -> str:
+    doi = paper.get("doi", "")
+    if "-026-" in doi or "/2026" in doi:
+        return "2026"
+    if "-025-" in doi or "/2025" in doi:
+        return "2025"
+    if "-024-" in doi or "/2024" in doi:
+        return "2024"
+    return "unknown"
+
 def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
     if not os.path.exists(json_path):
         raise FileNotFoundError(f"Cannot find {json_path}")
@@ -11,7 +55,6 @@ def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
         papers = json.load(f)
 
     print(f"Loaded {len(papers)} papers from {json_path}")
-
     chunks = []
 
     for paper in papers:
@@ -22,30 +65,45 @@ def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
         keywords = ", ".join(paper.get("keywords", []))
         abstract = paper.get("abstract", "")
         sections = paper.get("sections", {})
+        
+        full_text_sample = abstract + " ".join(list(sections.values())[:2])
+        domain = detect_domain(full_text_sample)
+        year   = extract_year(paper)
 
-        # Base metadata shared across all chunks of this paper
         base_metadata = {
             "source":   pmcid,
             "title":    title,
             "journal":  journal,
             "doi":      doi,
             "keywords": keywords,
+            "domain":   domain,
+            "year":     year,
         }
 
-        # 1. Abstract as its own chunk
+        # Abstract chunk
         if abstract.strip():
             chunks.append(Document(
-                page_content=f"Title: {title}\n\nAbstract:\n{abstract}",
+                page_content=f"Title: {title}\n\nAbstract:\n{abstract[:1500]}",
                 metadata={**base_metadata, "section": "abstract"}
             ))
 
-        # 2. Each section as its own chunk
+        # Section chunks — bigger size, skip junk sections
+        SKIP_SECTIONS = {
+            "supplementary information", "supplementary material",
+            "acknowledgements", "acknowledgments", "funding",
+            "competing interests", "author contributions",
+            "conflict of interest", "abbreviations", "references"
+        }
+
         for section_name, section_text in sections.items():
             if not section_text.strip():
                 continue
+            if any(skip in section_name.lower() for skip in SKIP_SECTIONS):
+                continue
+            if len(section_text) < 100:  # skip tiny sections
+                continue
 
-            # Split long sections (>1000 chars) into sub-chunks
-            sub_chunks = split_text(section_text, chunk_size=600, overlap=100)
+            sub_chunks = split_text(section_text, chunk_size=1000, overlap=150)
 
             for j, sub in enumerate(sub_chunks):
                 chunk_text = (
@@ -64,7 +122,6 @@ def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
 
     print(f"Total chunks created: {len(chunks)}")
     return chunks
-
 
 def split_text(text: str, chunk_size: int = 600, overlap: int = 100) -> list[str]:
     """Simple character-level splitter that respects sentence boundaries roughly."""

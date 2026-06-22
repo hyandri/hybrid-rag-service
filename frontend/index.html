@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hybrid RAG Portfolio Chatbot</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #343541;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #chat-container {
+            width: 100%;
+            max-width: 800px;
+            height: 90vh;
+            background-color: #444654;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #chat-window {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #ececf1;
+            word-wrap: break-word;
+        }
+
+        .user-message {
+            background-color: #10a37f;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+
+        .bot-message {
+            background-color: #343541;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid #4d4d4f;
+        }
+
+        .sources {
+            display: block;
+            font-size: 11px;
+            color: #9a9b9f;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        #input-container {
+            padding: 20px;
+            background-color: #444654;
+            border-top: 1px solid #4d4d4f;
+            display: flex;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            background-color: #40414f;
+            border: 1px solid #565869;
+            border-radius: 4px;
+            padding: 12px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+        }
+
+        #user-input:focus {
+            border-color: #10a37f;
+        }
+
+        #send-btn {
+            background-color: #10a37f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0 20px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #send-btn:hover {
+            background-color: #1a7f64;
+        }
+
+        #send-btn:disabled {
+            background-color: #565869;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div id="chat-container">
+    <div id="chat-window">
+        <div class="message bot-message">
+            Hello! I am your Hybrid RAG Assistant. Ask me anything about your loaded documents!
+        </div>
+    </div>
+    <div id="input-container">
+        <input type="text" id="user-input" placeholder="Type your question here..." autocomplete="off">
+        <button id="send-btn">Send</button>
+    </div>
+</div>
+
+<script>
+    const chatWindow = document.getElementById('chat-window');
+    const userInput = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+
+    // Add message to chat window UI
+    function appendMessage(text, className, sources = []) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${className}`;
+        messageDiv.innerText = text;
+
+        if (sources && sources.length > 0) {
+            const sourcesSpan = document.createElement('span');
+            sourcesSpan.className = 'sources';
+            sourcesSpan.innerText = `Sources: ${sources.join(', ')}`;
+            messageDiv.appendChild(sourcesSpan);
+        }
+
+        chatWindow.appendChild(messageDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to bottom
+    }
+
+    async function handleSend() {
+        const query = userInput.value.trim();
+        if (!query) return;
+
+        // Display user's message
+        appendMessage(query, 'user-message');
+        userInput.value = '';
+        
+        // Temporarily disable input while waiting for backend response
+        userInput.disabled = true;
+        sendBtn.disabled = true;
+
+        // Create a temporary placeholder for the bot response
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'message bot-message';
+        loadingDiv.innerText = 'Thinking...';
+        chatWindow.appendChild(loadingDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ question: query })
+            });
+
+            const data = await response.json();
+            
+            // Remove the "Thinking..." placeholder
+            chatWindow.removeChild(loadingDiv);
+
+            if (response.ok) {
+                // Display the real answer and source list returned from FastAPI
+                appendMessage(data.answer, 'bot-message', data.sources_used);
+            } else {
+                appendMessage('Error: Could not retrieve response from server.', 'bot-message');
+            }
+        } catch (error) {
+            chatWindow.removeChild(loadingDiv);
+            appendMessage('Error: Backend server is unreachable.', 'bot-message');
+            console.error(error);
+        } finally {
+            userInput.disabled = false;
+            sendBtn.disabled = false;
+            userInput.focus();
+        }
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    userInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSend();
+    });
+</script>
+
+</body>
+</html>
