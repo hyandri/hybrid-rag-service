@@ -5,3 +5,7 @@ data/
 pmc_cardiology_oncology.json
 pubmed_abstracts.json
 datascrap.py
+evaluate_rag.py
+ragas_results.json 
+ragas_summary.json
+test.py

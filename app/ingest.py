@@ -103,7 +103,7 @@ def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
             if len(section_text) < 100:  # skip tiny sections
                 continue
 
-            sub_chunks = split_text(section_text, chunk_size=1000, overlap=150)
+            sub_chunks = split_text(section_text, chunk_size=2000, overlap=300)
 
             for j, sub in enumerate(sub_chunks):
                 chunk_text = (

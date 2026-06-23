@@ -52,13 +52,13 @@ class HybridRAGRetriever:
             embedding=self.embeddings
         )
         self.vector_retriever = self.vector_store.as_retriever(
-            search_kwargs={"k": 10}
+            search_kwargs={"k": 20}
         )
 
         #  3. BM25 
         print("Building BM25 index...")
         self.bm25_retriever = BM25Retriever.from_documents(self.docs)
-        self.bm25_retriever.k = 10
+        self.bm25_retriever.k = 20
 
         #  4. Cohere Reranker 
         print("Initializing Cohere reranker...")
