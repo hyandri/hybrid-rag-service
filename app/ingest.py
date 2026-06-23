@@ -123,7 +123,7 @@ def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
     print(f"Total chunks created: {len(chunks)}")
     return chunks
 
-def split_text(text: str, chunk_size: int = 600, overlap: int = 100) -> list[str]:
+def split_text(text: str, chunk_size: int = 200, overlap: int = 300) -> list[str]:
     """Simple character-level splitter that respects sentence boundaries roughly."""
     if len(text) <= chunk_size:
         return [text]
