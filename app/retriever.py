@@ -23,7 +23,7 @@ class HybridRAGRetriever:
 
         # 2 Pinecone setup
         self.pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
-        index_name = "hybrid-rag-portfolio-hf"
+        index_name = "hybrid-rag-portfolio-hf-2"
         existing_indexes = [idx.name for idx in self.pc.list_indexes()]
 
         if index_name not in existing_indexes:
@@ -52,27 +52,31 @@ class HybridRAGRetriever:
             embedding=self.embeddings
         )
         self.vector_retriever = self.vector_store.as_retriever(
-            search_kwargs={"k": 20}
+            search_kwargs={
+                "search_type": "mmr",
+                "kwargs": {"k": 15, "fetch_k": 30, "lambda_mult": 0.6}
+            }
         )
 
         #  3. BM25 
         print("Building BM25 index...")
         self.bm25_retriever = BM25Retriever.from_documents(self.docs)
-        self.bm25_retriever.k = 20
+        self.bm25_retriever.k = 15
 
         #  4. Cohere Reranker 
         print("Initializing Cohere reranker...")
         self.compressor = CohereRerank(
             cohere_api_key=os.getenv("COHERE_API_KEY"),
             model="rerank-english-v3.0",
-            top_n=5
+            top_n=4
         )
-# add this method to HybridRAGRetriever
+
     def rewrite_query(self, query: str) -> str:
         prompt = f"""You are a biomedical search expert.
-    Rewrite the following question into an optimal search query for retrieving 
-    relevant biomedical research papers. Make it specific, use medical terminology,
-    and expand abbreviations.
+    Rewrite the following question into a descriptive, natural language search phrase for cross-reference retrieval. 
+    Expand abbreviations and use precise medical terminology.
+    
+    CRITICAL: Output ONLY a clean, plain-text string. Do NOT use boolean operators like AND, OR, NOT, quotes, or parentheses.
 
     Original question: {query}
 
@@ -80,21 +84,23 @@ class HybridRAGRetriever:
         
         try:
             rewritten = self.llm.invoke(prompt).content.strip()
+            rewritten = rewritten.replace('"', '').replace("'", "")
             print(f"  Original query: {query}")
             print(f"  Rewritten query: {rewritten}")
             return rewritten
         except Exception:
-            return query  # fallback to original if rewrite fails
+            return query  
 
 # update get_relevant_documents
     def get_relevant_documents(self, query: str):
         rewritten = self.rewrite_query(query)
 
-        vector_results = self.vector_retriever.invoke(rewritten)
+        vector_results_rewritten = self.vector_retriever.invoke(rewritten)
+        vector_results_original = self.vector_retriever.invoke(query)
         bm25_results   = self.bm25_retriever.invoke(rewritten)
 
         all_docs = list(
-            {doc.page_content: doc for doc in (vector_results + bm25_results)}.values()
+            {doc.page_content: doc for doc in (vector_results_rewritten + vector_results_original + bm25_results)}.values()
         )
         print(f"  Hybrid pool: {len(all_docs)} docs before rerank")
 

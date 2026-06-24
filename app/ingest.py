@@ -123,27 +123,29 @@ def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
     print(f"Total chunks created: {len(chunks)}")
     return chunks
 
-def split_text(text: str, chunk_size: int = 200, overlap: int = 300) -> list[str]:
+def split_text(text: str, chunk_size: int = 2000, overlap: int = 300) -> list[str]:
     """Simple character-level splitter that respects sentence boundaries roughly."""
     if len(text) <= chunk_size:
         return [text]
-
+    sentences = text.replace("\n", " ").split(". ")
     chunks = []
-    start = 0
-    while start < len(text):
-        end = start + chunk_size
+    current_chunk = []
+    current_length = 0
+    
+    for sentence in sentences:
+        clean_sentence = sentence.strip()+". "
+        sent_len = len(clean_sentence)
 
-        # Try to break at sentence boundary
-        if end < len(text):
-            # Look for last period/newline before end
-            break_at = max(
-                text.rfind(". ", start, end),
-                text.rfind("\n", start, end)
-            )
-            if break_at > start + overlap:
-                end = break_at + 1
+        if current_length+sent_len > chunk_size and current_chunk:
+            chunks.append("".join(current_chunk).strip())
+            overlap_pool = current_chunk[-2:] if len(current_chunk) >= 2 else current_chunk
+            current_chunk = list(overlap_pool)
+            current_length = sum(len(s) for s in current_chunk)
 
-        chunks.append(text[start:end].strip())
-        start = end - overlap
+        current_chunk.append(clean_sentence)
+        current_length +=sent_len
+    
+    if current_chunk:
+        chunks.append("".join(current_chunk).strip())
 
-    return [c for c in chunks if c.strip()]
+    return [c for c in chunks if len(c.strip()) > 50]

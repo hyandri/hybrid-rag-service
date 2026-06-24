@@ -2,7 +2,8 @@
 import os
 import uuid
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Literal
 from dotenv import load_dotenv
 from app.ingest import load_and_chunk_docs
 from app.retriever import HybridRAGRetriever
@@ -14,14 +15,14 @@ app = FastAPI(title="Hybrid RAG — Cardiology & Oncology Research Assistant")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows any local frontend file to make requests
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 print("Loading and chunking documents...")
-raw_chunks = load_and_chunk_docs("pmc_cardiology_oncology.json")  # ← updated path
+raw_chunks = load_and_chunk_docs("pmc_cardiology_oncology.json")  
 
 print("Initializing Hybrid Retriever...")
 retrieverEngine = HybridRAGRetriever(raw_chunks)
@@ -33,9 +34,17 @@ print("API ready.")
 
 sessions: dict[str,list[dict]] = {}  # session_id -> list of {question, answer, sources}
 
+class RouterDecision(BaseModel):
+    category: Literal["CHITCHAT", "GENERAL", "BIOMEDICAL_RAG", "MALICIOUS"] = Field(
+        description="The categorization of the user query."
+    )
+    reasoning:str = Field(
+        description="Short sentece why chosen"
+    )
 class QueryRequest(BaseModel):
     question: str
     session_id: str | None = None
+
 
 @app.post("/query")
 async def run_rag(request: QueryRequest):
