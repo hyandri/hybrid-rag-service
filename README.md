@@ -1,42 +1,203 @@
-# Enterprise Hybrid Search RAG Service with Reranking
+# Advanced Hybrid RAG – Biomedical Research Assistant
 
-A production-grade, asynchronous Retrieval-Augmented Generation (RAG) pipeline built with **FastAPI**, **LangChain**, and **Pinecone**. This architecture addresses the classic limitations of standard semantic vector databases by merging dense vector search with sparse keyword matching (BM25), optimized via a deep-learning **Cohere Reranker** and structural inline source citations.
+A Retrieval-Augmented Generation (RAG) system designed for biomedical literature search and question answering. The project combines hybrid retrieval, query expansion, cross-encoder reranking, and conversational memory to improve answer quality over a traditional vector-search-only pipeline.
 
----
+## Features
 
-## 🚀 Why This Architecture Matters (The Enterprise Problem)
-Most basic RAG tutorials rely solely on Vector Search (Dense Retrieval). While excellent at understanding contextual semantics, pure vector search routinely fails in industry environments where users query exact alphanumeric codes, serial numbers, specific product models, or corporate acronyms. 
-
-This repository implements a **Hybrid Search + Rerank** blueprint to maximize retrieval precision:
-1. **Dense Retrieval (Pinecone):** Captures conceptual, semantic context and intent.
-2. **Sparse Retrieval (BM25):** Anchors onto exact keyword hits, nomenclature, and financial numbers.
-3. **Reciprocal Rank Fusion (RRF):** Blends the distinct scoring distributions programmatically.
-4. **Contextual Compression (Cohere Rerank):** Passes top candidate chunks to a cross-encoder network to score definitive relevance, slicing off only the top $k$ items to dramatically mitigate LLM token costs and eliminate "needle-in-a-haystack" confusion.
-
----
-
-## 🛠️ Tech Stack
-* **Framework:** FastAPI (Python 3.11+)
-* **Orchestration:** LangChain / LangChain-Community
-* **Vector Database:** Pinecone (Serverless Starter)
-* **Keyword Indexing:** Rank_BM25
-* **Reranking Engine:** Cohere Rerank V3
-* **LLM Engine:** Google Gemini (via ChatGoogleGenerativeAI) / Groq (Llama-3)
+* Hybrid Retrieval (Pinecone + BM25)
+* LLM-Powered Query Expansion
+* Cohere Cross-Encoder Reranking
+* Intelligent Query Router & Guardrails
+* Sentence-Aware Document Chunking
+* Persistent Chat Sessions with SQLite
+* Evaluation Pipeline for RAG Performance Analysis
 
 ---
 
-## 📂 Project Structure
+## Architecture
+
 ```text
-hybrid-rag-service/
-│
-├── app/
-│   ├── __init__.py
-│   ├── main.py          # FastAPI application router & system gateway
-│   ├── ingest.py        # Automated PDF/Text extraction and semantic chunking
-│   ├── retriever.py     # Hybrid search engine (Pinecone + BM25) & Cohere Reranking
-│   └── generator.py     # High-precision prompt synthesis & strict citation logic
-│
-├── data/                # Directory for local internal documents (.txt or .pdf)
-├── .env                 # Local API keys (Strictly Git-ignored!)
-├── requirements.txt     # System dependencies
-└── README.md            # System documentation
+User Query
+     │
+     ▼
+┌────────────────────┐
+│  Query Router      │
+└─────────┬──────────┘
+          │
+ ┌────────┴────────┐
+ ▼                 ▼
+General      Biomedical
+Response        Query
+                    │
+                    ▼
+          Query Expansion
+                    │
+        ┌───────────┴───────────┐
+        ▼                       ▼
+ Dense Retrieval         Sparse Retrieval
+   (Pinecone)                 (BM25)
+        │                       │
+        └───────────┬───────────┘
+                    ▼
+          Hybrid Candidate Pool
+                    │
+                    ▼
+          Cohere Reranking
+                    │
+                    ▼
+            Top Context Chunks
+                    │
+                    ▼
+           Llama 3.3 70B
+                    │
+                    ▼
+              Final Answer
+```
+
+---
+
+## Key Design Decisions
+
+### Query Router
+
+Incoming requests are classified into:
+
+* CHITCHAT
+* GENERAL
+* BIOMEDICAL_RAG
+* MALICIOUS
+
+This allows non-medical questions to bypass retrieval entirely while blocking obvious prompt injection attempts.
+
+### Sentence-Aware Chunking
+
+Documents are split using sentence boundaries rather than fixed character counts.
+
+Benefits:
+
+* Preserves scientific context
+* Reduces fragmented information
+* Improves answer faithfulness
+
+### Hybrid Retrieval
+
+The retrieval layer combines:
+
+**Dense Search**
+
+* Semantic similarity retrieval using Pinecone
+
+**Sparse Search**
+
+* Keyword matching using BM25
+
+This approach improves recall compared to using either retrieval strategy alone.
+
+### Query Expansion
+
+Biomedical queries are expanded before retrieval to improve semantic coverage and increase the likelihood of retrieving relevant research passages.
+
+### Cross-Encoder Reranking
+
+Retrieved candidates are reranked using Cohere's `rerank-english-v3.0` model to identify the most relevant context before generation.
+
+### Persistent Session Storage
+
+Conversation history is stored in SQLite and can be restored across sessions while maintaining a rolling conversational context window.
+
+---
+
+## Evaluation Results
+
+The optimized pipeline was evaluated against a baseline RAG implementation.
+
+| Metric            | Baseline RAG | Advanced Hybrid RAG |
+| ----------------- | ------------ | ------------------- |
+| Faithfulness      | 0.475        | 0.725               |
+| Answer Relevancy  | 0.638        | 0.686               |
+| Context Recall    | 0.438        | 0.537               |
+| Context Precision | 0.528        | 0.510               |
+
+### Observations
+
+* Sentence-aware chunking significantly improved faithfulness.
+* Hybrid retrieval improved context recall compared to a vector-only approach.
+* Reranking reduced retrieval noise and improved answer relevance.
+* Recall remains constrained by the size of the underlying biomedical corpus.
+
+---
+
+## Technology Stack
+
+| Component        | Technology                     |
+| ---------------- | ------------------------------ |
+| Backend          | FastAPI                        |
+| LLM              | Groq (Llama 3.3 70B Versatile) |
+| Vector Database  | Pinecone                       |
+| Embeddings       | all-MiniLM-L6-v2               |
+| Sparse Retrieval | BM25                           |
+| Reranking        | Cohere rerank-english-v3.0     |
+| Storage          | SQLite                         |
+
+---
+
+## Installation
+
+### Clone Repository
+
+```bash
+git clone https://github.com/yourusername/advanced-hybrid-rag.git
+cd advanced-hybrid-rag
+```
+
+### Configure Environment Variables
+
+Create a `.env` file:
+
+```env
+GROQ_API_KEY=your_groq_key
+PINECONE_API_KEY=your_pinecone_key
+COHERE_API_KEY=your_cohere_key
+```
+
+### Install Dependencies
+
+```bash
+conda create -n hybrid_rag python=3.11 -y
+conda activate hybrid_rag
+
+pip install -r requirements.txt
+```
+
+### Run the Application
+
+```bash
+uvicorn app.main:app --reload --port 8000
+```
+
+---
+
+## Running Evaluations
+
+```bash
+python evaluate_rag.py
+```
+
+This script evaluates the system using predefined benchmark questions and reports retrieval and generation metrics.
+
+---
+
+## Future Improvements
+
+* Parent-Child Retrieval
+* Metadata Filtering
+* Multi-Query Retrieval
+* Knowledge Graph Integration
+* Asynchronous Ingestion Pipeline
+* Automated Evaluation Dashboard
+
+---
+
+## What I Learned
+
+This project reinforced that retrieval quality often has a larger impact on RAG performance than simply switching to a larger language model. Improvements such as sentence-aware chunking, hybrid retrieval, and reranking produced measurable gains in faithfulness and retrieval effectiveness.
