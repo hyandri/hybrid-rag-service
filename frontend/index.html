@@ -289,7 +289,7 @@ Ask a specific scientific question, and I will synthesize an answer grounded in 
 
     try {
       // ⚡ FIX: Absolute URL connecting directly to your FastAPI backend port
-      const response = await fetch('http://127.0.0.1:8000/query', {
+      const response = await fetch('http://127.0.0.1:9100/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: query })
@@ -306,7 +306,7 @@ Ask a specific scientific question, and I will synthesize an answer grounded in 
 
     } catch (err) {
       chatFeed.removeChild(statusPlaceholder);
-      appendBubble('assistant', `Error contacting the backend: ${err.message}. Ensure the FastAPI server is running on port 8000 and CORS is enabled.`);
+      appendBubble('assistant', `Error contacting the backend: ${err.message}. Ensure the FastAPI server is running on port 8001 and CORS is enabled.`);
       console.error(err);
     } finally {
       queryInput.disabled = false;

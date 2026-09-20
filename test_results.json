@@ -1,0 +1,161 @@
+[
+  {
+    "question": "What is the role of TNF-\u03b1 in myocardial infarction?",
+    "answer": "The available literature does not contain sufficient information to answer this question.",
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.088,
+    "context_recall": 0.0,
+    "context_precision": 0.306
+  },
+  {
+    "question": "How do nanoparticles cross the blood-brain barrier?",
+    "answer": "Nanoparticles traverse the blood\u2011brain barrier (BBB) primarily by exploiting endogenous transport routes or by physically bypassing the barrier.  Surface functionalisation with ligands that engage BBB transporters\u2014such as mannose\u2011decorated PLGA\u2011PEG particles that bind GLUT1\u2014enables receptor\u2011mediated transcytosis and delivers cargo like fingolimod directly into the brain parenchyma\u3010PMC13280311\u3011.  Lipid\u2011based nanocarriers (e.g., solid lipid nanoparticles) and mitochondria\u2011targeted particles functionalised with the lipophilic cation TPP\u207a improve membrane permeability and exploit the BBB\u2019s lipid\u2011rich environment to achieve higher brain bioavailability\u3010PMC13280311\u3011.  Intranasal administration provides a non\u2011invasive shortcut, allowing muco\u2011adhesive chitosan\u2011based nanocarriers to travel along olfactory and trigeminal pathways and reach the CNS without crossing the BBB at all\u3010PMC13280311\u3011.  Finally, biomimetic designs that mimic exosomal vesicles or magnetic nanoparticles guided by external fields can penetrate the BBB and localise to perivascular spaces, where they support vascular protection and glymphatic clearance\u3010PMC13280311\u3011.",
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.632,
+    "context_recall": 0.0,
+    "context_precision": 0.57
+  },
+  {
+    "question": "What are the mechanisms of chemotherapy resistance in cancer cells?",
+    "answer": "Chemotherapy resistance arises when cancer cells rewire survival pathways to evade drug\u2011induced death, most notably by bypassing apoptosis through mutations in TP53, amplification of anti\u2011apoptotic BCL2, or inactivation of caspases, which render the canonical cell\u2011death program ineffective [PMC13281579]. In parallel, tumor cells deploy redundant antioxidant networks\u2014such as upregulation of FSP1, DHODH, and GCH1\u2014to neutralize lipid peroxidation, remodel membrane phospholipids toward less peroxidizable fatty acids, and enhance iron export, thereby maintaining redox homeostasis below the lethal threshold for ferroptosis [PMC13281579]. Ovarian cancer stem cells intensify this defense by overexpressing GPX4 and FSP1, coupling redox balance with amino\u2011acid metabolism to preserve stemness and resist both platinum agents and ferroptosis inducers [PMC13281579]. Moreover, the peritoneal microenvironment amplifies resistance: malignant ascites supplies excess iron, while adipocyte\u2011derived lipids in the omentum fuel lipid remodeling, and cancer\u2011associated fibroblasts secrete paracrine factors that further shield tumor cells from oxidative stress [PMC13281579]. Collectively, these intertwined genetic, metabolic, and microenvironmental adaptations create a multifaceted barrier that allows cancer cells to survive conventional chemotherapy.",
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.526,
+    "context_recall": 0.0,
+    "context_precision": 0.449
+  },
+  {
+    "question": "What is the role of microglia in neuroinflammation?",
+    "answer": "Microglia serve as the central orchestrators of neuroinflammation, acting both as first\u2011line defenders that can amplify injury\u2011induced inflammation and as regulators that promote resolution and tissue repair. In response to neuronal damage they adopt a pro\u2011inflammatory (M1\u2011like) phenotype, releasing cytokines such as TNF\u2011\u03b1, IFN\u2011\u03b3 and IL\u20111\u03b2 that can exacerbate neuronal death, while a shift toward an anti\u2011inflammatory (M2\u2011like) state drives the secretion of IL\u201110, TGF\u2011\u03b2 and neurotrophic factors that support recovery [PMC13280311]. Crucially, microglial efferocytosis of apoptotic neurons not only removes potentially toxic debris but also triggers this phenotypic transition, suppressing further inflammatory signaling and fostering a reparative environment; failure of this clearance mechanism leads to accumulation of dying cells, heightened inflammation and secondary damage [PMC13281441]. Thus, microglia are pivotal in both propagating and curbing neuroinflammatory cascades, with their phagocytic activity acting as a key switch between destructive and restorative outcomes.",
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.656,
+    "context_recall": 0.0,
+    "context_precision": 0.553
+  },
+  {
+    "question": "How does mitochondrial dysfunction contribute to Alzheimer's disease?",
+    "answer": "Mitochondrial dysfunction drives Alzheimer\u2019s pathology by becoming a dominant source of reactive oxygen species that overwhelms neuronal antioxidant defenses, thereby impairing energy metabolism, disrupting calcium homeostasis, and precipitating oxidative damage that culminates in neuronal loss [PMC13280311]. The vulnerability of mitochondrial DNA to this oxidative assault is stark: patients with Alzheimer\u2019s exhibit 10\u2011 to 20\u2011fold greater mtDNA damage than nuclear DNA damage, and cells harboring Alzheimer\u2019s\u2011derived mtDNA generate excess ROS, establishing a feed\u2011forward loop that amplifies neurotoxic stress [PMC13280311]. Because synaptic transmission depends on tightly regulated mitochondrial ATP production, mitochondrial deficits translate into reduced synaptic energy supply, oxidative injury to synaptic mitochondria, and progressive synapse degradation, which correlates more closely with cognitive decline than amyloid or tau accumulation [PMC13280311]. Together, these mechanisms position mitochondrial failure as a central, amyloid\u2011independent driver of the neurodegenerative cascade in Alzheimer\u2019s disease.",
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.748,
+    "context_recall": 0.0,
+    "context_precision": 0.583
+  },
+  {
+    "question": "What biomarkers track neurodegeneration in Alzheimer's disease?",
+    "answer": "Neurofilament light chain (NFL) has emerged as the most direct fluid biomarker of neurodegeneration in Alzheimer\u2019s disease, because its concentration in cerebrospinal fluid and peripheral blood rises in parallel with axonal injury and neuronal loss and predicts both disease progression and cognitive decline independent of amyloid\u2011\u03b2 status [PMC13280311][PMC13280697]. Elevated plasma NFL also links neuropsychiatric symptom burden to regional brain atrophy, underscoring its role as a mediator of structural degeneration that translates into functional impairment [PMC13280697]. Together, these findings position NFL as a dynamic, quantifiable index of ongoing neurodegenerative processes across the Alzheimer\u2019s continuum.",
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.657,
+    "context_recall": 0.0,
+    "context_precision": 0.568
+  },
+  {
+    "question": "What is the role of SGLT2 inhibitors in heart failure?",
+    "answer": "Sodium\u2013glucose cotransporter\u20112 (SGLT2) inhibitors have emerged as a disease\u2011modifying therapy for heart failure, lowering the incidence of hospitalization for heart failure (HHF) across the full range of left\u2011ventricular ejection fractions and improving survival after acute decompensation. In the DECLARE\u2011TIMI\u202f58 trial, dapagliflozin cut the risk of HHF by 30\u202f% in a broad diabetic population and produced an even larger relative reduction (82\u202f%) among carriers of pathogenic cardiomyopathy\u2011associated gene variants, translating into a 13\u2011percentage\u2011point absolute risk drop for those genetically predisposed to heart failure [PMC13278951]. Parallel evidence from real\u2011world US cohorts shows that initiating an SGLT2 inhibitor at discharge after hospitalization for heart failure with reduced ejection fraction markedly improves post\u2011discharge survival and reduces readmissions, extending the benefit to older patients who were under\u2011represented in earlier trials [PMC13279353]. Together, these findings position SGLT2 inhibition as a cornerstone therapy that not only mitigates clinical events in established heart failure but also confers preventive advantage in high\u2011risk genetic carriers.",
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.678,
+    "context_recall": 0.0,
+    "context_precision": 0.637
+  },
+  {
+    "question": "How does oxidative stress contribute to neuronal death?",
+    "answer": "Oxidative stress drives neuronal death by overwhelming the cell\u2019s antioxidant capacity, allowing excess reactive oxygen species (ROS) to damage mitochondrial membranes and impair oxidative phosphorylation, which in turn depletes ATP and precipitates energy failure that culminates in cell loss [PMC13280563]. The resulting mitochondrial dysfunction releases mitochondrial DNA and other danger\u2011associated molecular patterns that activate inflammasomes such as AIM2, thereby triggering pyroptotic and apoptotic cascades mediated by Bax, caspase\u20113, and other pro\u2011death effectors [PMC13279499][PMC13281299]. When mitophagy is blocked, damaged mitochondria persist, further amplifying ROS production and sustaining a feed\u2011forward loop of inflammation and cell death; restoring mitophagy can break this cycle and protect neurons [PMC13281299]. Consequently, oxidative stress is not merely a by\u2011product of injury but a central mechanistic hub that links energy collapse, inflammasome activation, and programmed cell death, making it a pivotal target for neuroprotective strategies.",
+    "faithfulness": 0.0,
+    "answer_relevancy": 0.678,
+    "context_recall": 0.0,
+    "context_precision": 0.519
+  },
+  {
+    "question": "Among the young adults studied, what percentage had no or minimal mental health symptoms at the start of the study?",
+    "ground_truth": "62.5% of the participants were classified as having no or low symptoms at baseline.",
+    "gold_pmcid": "PMC13281706",
+    "retrieved_pmcids": [
+      "PMC13281706",
+      "PMC13281706",
+      "PMC13281599",
+      "PMC13281599"
+    ],
+    "answer": "Approximately 62.5\u202f% of the young adults entered the study in a none\u2011or\u2011low\u2011symptom mental\u2011health state, indicating that roughly two\u2011thirds began without notable internalizing or externalizing problems [PMC13281706].",
+    "abstained": false,
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.873,
+    "context_recall": 1.0,
+    "context_precision": 1.0,
+    "hit": 1.0,
+    "mrr": 1.0
+  },
+  {
+    "question": "In the described virtual reality and AI project, how are the self\u2011aspect scenarios chosen by patients altered to support therapeutic parts work?",
+    "ground_truth": "The AI modifies the selected scenarios using prompts that increase their evocative power, which helps make internal conflicts and blockages more explicit.",
+    "gold_pmcid": "PMC13279657",
+    "retrieved_pmcids": [
+      "PMC13279657",
+      "PMC13279657",
+      "PMC13279657",
+      "PMC13279657"
+    ],
+    "answer": "In the \u201cIntrospecta\u202fVR\u201d project, patients first select immersive scenarios that embody particular self\u2011aspects they wish to explore. An AI engine then rewrites those scenarios by applying targeted prompts that amplify their emotional resonance and vividness, thereby heightening the evocative power of each representation. This AI\u2011driven augmentation makes the internal dialogue between distinct \u201cparts\u201d more concrete, exposing conflicts and blockages that can be addressed directly in therapy. By rendering each self\u2011version more salient, the system supports a structured parts\u2011work approach that facilitates integration and resolution of internal tensions\u3010PMC13279657\u3011.",
+    "abstained": false,
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.662,
+    "context_recall": 1.0,
+    "context_precision": 1.0,
+    "hit": 1.0,
+    "mrr": 1.0
+  },
+  {
+    "question": "What major thematic areas were identified from interviews about the effects of the COVID\u201119 response on community pharmacy practice?",
+    "ground_truth": "Four themes emerged: (1) the pandemic\u2019s impact on pharmacy practice, (2) its impact on patient health and well\u2011being, (3) its impact on pharmacists\u2019 health and well\u2011being, and (4) recommendations for the post\u2011COVID period.",
+    "gold_pmcid": "PMC13280592",
+    "retrieved_pmcids": [
+      "PMC13280592",
+      "PMC13280592",
+      "PMC13280592",
+      "PMC13280592"
+    ],
+    "answer": "Four overarching thematic areas emerged from the pharmacists\u2019 narratives about how the COVID\u201119 response reshaped community pharmacy. First, participants described direct disruptions and adaptations to routine pharmacy operations, including changes in service delivery, staffing, and the accessibility of other health services that altered the pharmacy\u2019s role in primary care.\u202fSecond, they highlighted the pandemic\u2019s ripple effects on patients\u2019 health and well\u2011being, noting increased medication\u2011related concerns, barriers to care, and heightened reliance on pharmacists for health information.\u202fThird, the interviews captured personal and professional impacts on the pharmacists themselves, such as stress, workload intensification, and the emotional toll of navigating an evolving public\u2011health crisis.\u202fFinally, pharmacists offered forward\u2011looking recommendations, urging the retention of beneficial practice changes and an expanded scope of practice to better meet population health needs post\u2011pandemic.\u202fThese themes collectively map the multifaceted ways the pandemic reshaped pharmacy practice, patient outcomes, provider experience, and future service models\u202f[PMC13280592].",
+    "abstained": false,
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.793,
+    "context_recall": 1.0,
+    "context_precision": 0.75,
+    "hit": 1.0,
+    "mrr": 1.0
+  },
+  {
+    "question": "How do routine blood count\u2013derived inflammatory indices typically change after therapy in psoriasis, atopic dermatitis, and hidradenitis suppurativa?",
+    "ground_truth": "In psoriasis and hidradenitis suppurativa, most CBC\u2011derived markers (e.g., Fas, FasL, soluble Fas, IL\u201121, neutrophil\u2011to\u2011lymphocyte ratio, platelet\u2011to\u2011lymphocyte ratio, systemic immune\u2011inflammation index, systemic inflammation response index, pan\u2011immune\u2011inflammation value, aggregate index of systemic inflammation) are elevated during active disease and decrease following treatment. Evidence for atopic dermatitis is limited; the few reported markers (Fas, FasL, IL\u201121) tend to decline after treatment, while many other indices have no data or show mixed responses.",
+    "gold_pmcid": "PMC13280280",
+    "retrieved_pmcids": [
+      "PMC13280280",
+      "PMC13280280",
+      "PMC13280280",
+      "PMC13280280"
+    ],
+    "answer": "Across the three chronic inflammatory skin diseases, routine complete\u2011blood\u2011count (CBC)\u2013derived indices tend to move in opposite directions after effective therapy: they fall when disease activity improves and rise when inflammation persists. In psoriasis, virtually every index that is elevated relative to healthy controls\u2014neutrophil\u2011to\u2011lymphocyte ratio (NLR), platelet\u2011to\u2011lymphocyte ratio (PLR), monocyte\u2011to\u2011lymphocyte ratio (MLR), derived NLR (d\u2011NLR), systemic immune\u2011inflammation index (SII), systemic inflammation response index (SIRI), pan\u2011immune\u2011inflammation value (PIV) and aggregate index of systemic inflammation (AISI)\u2014shows a consistent post\u2011treatment decline, mirroring the reduction in cutaneous inflammation [PMC13280280].  \n\nAtopic dermatitis offers far fewer data points; the few reported changes are heterogeneous, with NLR and PLR displaying mixed up\u2011 or down\u2011trends and most other indices lacking sufficient evidence to define a clear pattern, underscoring a knowledge gap for this condition [PMC13280280].  \n\nIn hidradenitis suppurativa, baseline elevations in the same suite of indices (NLR, PLR, MLR, SII, etc.) are well documented, and longitudinal studies demonstrate that biologic therapy (e.g., adalimumab) typically drives these markers downward within weeks of initiation, although some indices (notably PLR) may not change uniformly across all studies [PMC13280280][PMC13280280].  \n\nThus, while psoriasis and HS reliably exhibit post\u2011treatment reductions in CBC\u2011derived inflammatory ratios, atopic dermatitis currently lacks a coherent signal, highlighting the need for larger, standardized investigations in that disease.",
+    "abstained": false,
+    "faithfulness": 0.8,
+    "answer_relevancy": 0.828,
+    "context_recall": 1.0,
+    "context_precision": 1.0,
+    "hit": 1.0,
+    "mrr": 1.0
+  },
+  {
+    "question": "Among non\u2011hospitalized patients with type 2 diabetes, which class of glucose\u2011lowering medication was associated with a reduced risk of neurological sequelae after COVID\u201119 infection?",
+    "ground_truth": "SGLT2 inhibitors were protective against neurological outcomes (p = 0.0041), and this protective effect persisted in a sensitivity analysis using a 90\u2011 to 300\u2011day post\u2011infection window (p = 0.0014).",
+    "gold_pmcid": "PMC13280275",
+    "retrieved_pmcids": [
+      "PMC13280275",
+      "PMC13280275",
+      "PMC13280275",
+      "PMC13280275"
+    ],
+    "answer": "Sodium\u2011glucose cotransporter\u20112 inhibitors (SGLT2i) were linked to a lower incidence of post\u2011acute neurological complications, including memory and cognitive impairment, in non\u2011hospitalized patients with type\u202f2 diabetes who contracted COVID\u201119 [PMC13280275][PMC13280275].",
+    "abstained": false,
+    "faithfulness": null,
+    "answer_relevancy": null,
+    "context_recall": null,
+    "context_precision": null,
+    "hit": 1.0,
+    "mrr": 1.0
+  }
+]

@@ -36,7 +36,8 @@ Response        Query
         ▼                       ▼
  Dense Retrieval         Sparse Retrieval
    (Pinecone)                 (BM25)
-        │                       │
+        │    
+                           │
         └───────────┬───────────┘
                     ▼
           Hybrid Candidate Pool

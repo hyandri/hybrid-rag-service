@@ -22,6 +22,7 @@ DOMAIN_KEYWORDS = {
     "reproductive":  ["ovary", "follicle", "estrous", "reproductive", "fertility", "oocyte"],
 }
 
+
 SKIP_SECTIONS = {
     "supplementary information", "supplementary material",
     "acknowledgements", "acknowledgments", "funding",
@@ -30,12 +31,19 @@ SKIP_SECTIONS = {
     "data availability", "ethics"
 }
 
+
 def detect_domain(text: str) -> str:
     text_lower = text.lower()
     for domain, keywords in DOMAIN_KEYWORDS.items():
-        if any(kw in text_lower for kw in keywords):
+        # .lower() on the keyword too — "TNF" in DOMAIN_KEYWORDS["immunology"]
+        # was never matching anything because text_lower is lowercase but
+        # the keyword itself wasn't, so `"TNF" in text_lower` was always
+        # False. Every other keyword in the dict happened to already be
+        # lowercase, which is why this went unnoticed.
+        if any(kw.lower() in text_lower for kw in keywords):
             return domain
     return "general"
+
 
 def extract_year(paper: dict) -> str:
     doi = paper.get("doi", "")
@@ -46,6 +54,7 @@ def extract_year(paper: dict) -> str:
     if "-024-" in doi or "/2024" in doi:
         return "2024"
     return "unknown"
+
 
 def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
     if not os.path.exists(json_path):
@@ -65,8 +74,8 @@ def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
         keywords = ", ".join(paper.get("keywords", []))
         abstract = paper.get("abstract", "")
         sections = paper.get("sections", {})
-        
-        full_text_sample = abstract + " ".join(list(sections.values())[:2])
+
+        full_text_sample = abstract + " " + " ".join(list(sections.values())[:2])
         domain = detect_domain(full_text_sample)
         year   = extract_year(paper)
 
@@ -86,14 +95,6 @@ def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
                 page_content=f"Title: {title}\n\nAbstract:\n{abstract[:1500]}",
                 metadata={**base_metadata, "section": "abstract"}
             ))
-
-        # Section chunks — bigger size, skip junk sections
-        SKIP_SECTIONS = {
-            "supplementary information", "supplementary material",
-            "acknowledgements", "acknowledgments", "funding",
-            "competing interests", "author contributions",
-            "conflict of interest", "abbreviations", "references"
-        }
 
         for section_name, section_text in sections.items():
             if not section_text.strip():
@@ -123,28 +124,47 @@ def load_and_chunk_docs(json_path="pmc_cardiology_oncology.json"):
     print(f"Total chunks created: {len(chunks)}")
     return chunks
 
+
 def split_text(text: str, chunk_size: int = 2000, overlap: int = 300) -> list[str]:
-    """Simple character-level splitter that respects sentence boundaries roughly."""
+    """
+    Simple character-level splitter that respects sentence boundaries
+    roughly. Splitting on literal ". " will mis-segment on abbreviations
+    common in biomedical text ("Fig. 2", "P < 0.05 vs.", "e.g."), producing
+    occasional mid-sentence chunk boundaries — not a crash, just noisier
+    chunks. If that ever shows up as a retrieval-quality problem, swap this
+    for langchain_text_splitters.RecursiveCharacterTextSplitter, which
+    handles this for free:
+
+        from langchain_text_splitters import RecursiveCharacterTextSplitter
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size, chunk_overlap=overlap,
+            separators=["\\n\\n", "\\n", ". ", " ", ""],
+        )
+        return splitter.split_text(text)
+
+    Left as-is here since it's a quality tweak, not a bug — the two fixes
+    above (SKIP_SECTIONS, keyword case) were actual bugs and higher priority.
+    """
     if len(text) <= chunk_size:
         return [text]
     sentences = text.replace("\n", " ").split(". ")
     chunks = []
     current_chunk = []
     current_length = 0
-    
+
     for sentence in sentences:
-        clean_sentence = sentence.strip()+". "
+        clean_sentence = sentence.strip() + ". "
         sent_len = len(clean_sentence)
 
-        if current_length+sent_len > chunk_size and current_chunk:
+        if current_length + sent_len > chunk_size and current_chunk:
             chunks.append("".join(current_chunk).strip())
             overlap_pool = current_chunk[-2:] if len(current_chunk) >= 2 else current_chunk
             current_chunk = list(overlap_pool)
             current_length = sum(len(s) for s in current_chunk)
 
         current_chunk.append(clean_sentence)
-        current_length +=sent_len
-    
+        current_length += sent_len
+
     if current_chunk:
         chunks.append("".join(current_chunk).strip())
 

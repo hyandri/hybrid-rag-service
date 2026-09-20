@@ -11,7 +11,7 @@ class HybridRAGRetriever:
     def __init__(self, documents):
         self.docs = documents
         self.llm = ChatGroq(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             temperature=0,
             api_key=os.getenv("GROQ_API_KEY")
         )
@@ -71,12 +71,23 @@ class HybridRAGRetriever:
             top_n=4
         )
 
-    def rewrite_query(self, query: str) -> str:
+    def rewrite_query(self, query: str, history: list[dict] | None = None) -> str:
+        history = history or []
+        history_text = ""
+        if history:
+            last_turns = history[-2:]
+            history_text = "\n".join(f"{h['role']}: {h['content']}" for h in last_turns)
+
         prompt = f"""You are a biomedical search expert.
     Rewrite the following question into a descriptive, natural language search phrase for cross-reference retrieval. 
     Expand abbreviations and use precise medical terminology.
-    
+    If the question refers back to something in the conversation (e.g. "and in men?", "what about young adults"), 
+    resolve that reference using the conversation below so the rewritten query is fully self-contained.
+
     CRITICAL: Output ONLY a clean, plain-text string. Do NOT use boolean operators like AND, OR, NOT, quotes, or parentheses.
+
+    Conversation so far:
+    {history_text if history_text else "None"}
 
     Original question: {query}
 
@@ -92,8 +103,8 @@ class HybridRAGRetriever:
             return query  
 
 # update get_relevant_documents
-    def get_relevant_documents(self, query: str):
-        rewritten = self.rewrite_query(query)
+    def get_relevant_documents(self, query: str, history: list[dict] | None = None):
+        rewritten = self.rewrite_query(query, history)
 
         vector_results_rewritten = self.vector_retriever.invoke(rewritten)
         vector_results_original = self.vector_retriever.invoke(query)
