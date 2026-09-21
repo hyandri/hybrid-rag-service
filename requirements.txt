@@ -34,7 +34,6 @@ datasets==5.0.0
 debugpy==1.8.21
 decorator==5.3.1
 defusedxml==0.7.1
-dill==0.3.9
 diskcache==5.6.3
 distro==1.9.0
 docstring_parser==0.18.0
