@@ -82,7 +82,7 @@ If the question refers back to something in the conversation (e.g. "and in men?"
 resolve that reference using the conversation below so the rewritten query is fully self-contained.
 
 CRITICAL: Output ONLY a clean, plain-text string. Do NOT use boolean operators like AND, OR, NOT, quotes, or parentheses.
-
+Do not assume a medical specialty or add clinical detail not present in the original question — if a term is ambiguous, keep it general.
 Conversation so far:
 {history_text if history_text else "None"}
 
