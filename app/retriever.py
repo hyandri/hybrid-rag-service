@@ -6,6 +6,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from pinecone import Pinecone, ServerlessSpec
 from langchain_cohere import CohereRerank
 from langchain_groq import ChatGroq
+import time
 
 MIN_RELEVANCE = 0.35
 
@@ -98,6 +99,30 @@ Return only the rewritten query, nothing else."""
         except Exception:
             return query
 
+    # def get_relevant_documents(self, query: str, history: list[dict] | None = None):
+    #     rewritten = self.rewrite_query(query, history)
+
+    #     vector_results_rewritten = self.vector_retriever.invoke(rewritten)
+    #     vector_results_original = self.vector_retriever.invoke(query)
+    #     bm25_results = self.bm25_retriever.invoke(rewritten)
+
+    #     all_docs = list(
+    #         {doc.page_content: doc for doc in (vector_results_rewritten + vector_results_original + bm25_results)}.values()
+    #     )
+    #     print(f"  Hybrid pool: {len(all_docs)} docs before rerank")
+
+    #     reranked = self.compressor.compress_documents(all_docs, rewritten)
+
+    #     filtered = []
+    #     for d in reranked:
+    #         score = d.metadata.get("relevance_score", 0.0)
+    #         if score >= MIN_RELEVANCE:
+    #             filtered.append(d)
+
+    #     print(f"  After rerank: {len(reranked)} → {len(filtered)} above threshold ({MIN_RELEVANCE})")
+
+    #     return filtered if filtered else reranked[:1]
+
     def get_relevant_documents(self, query: str, history: list[dict] | None = None):
         rewritten = self.rewrite_query(query, history)
 
@@ -110,7 +135,21 @@ Return only the rewritten query, nothing else."""
         )
         print(f"  Hybrid pool: {len(all_docs)} docs before rerank")
 
-        reranked = self.compressor.compress_documents(all_docs, rewritten)
+        # --- Cohere trial key rate limit: 10 calls/min ---
+        time.sleep(6)
+        for attempt in range(3):
+            try:
+                reranked = self.compressor.compress_documents(all_docs, rewritten)
+                break
+            except Exception as e:
+                if "429" in str(e) or "TooManyRequests" in str(e):
+                    print("    .. Cohere rate limited, waiting 15s")
+                    time.sleep(15)
+                else:
+                    raise
+        else:
+            reranked = all_docs[:6]
+        # --- end rate limit block ---
 
         filtered = []
         for d in reranked:
@@ -121,7 +160,7 @@ Return only the rewritten query, nothing else."""
         print(f"  After rerank: {len(reranked)} → {len(filtered)} above threshold ({MIN_RELEVANCE})")
 
         return filtered if filtered else reranked[:1]
-
+    
     def _upsert_documents(self, index_name):
         print(f"Upserting {len(self.docs)} chunks to Pinecone...")
         BATCH_SIZE = 100
