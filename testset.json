@@ -1,116 +1,116 @@
 [
   {
-    "question": "Among the young adults studied, what percentage had no or minimal mental health symptoms at the start of the study?",
+    "question": "At baseline, what proportion of young adult subjects in the trial exhibited either absent or low-level psychiatric indicators?",
     "ground_truth": "62.5% of the participants were classified as having no or low symptoms at baseline.",
     "gold_pmcid": "PMC13281706",
-    "lexical_overlap": 0.57
+    "lexical_overlap": 0.22
   },
   {
-    "question": "In the described virtual reality and AI project, how are the self\u2011aspect scenarios chosen by patients altered to support therapeutic parts work?",
+    "question": "In the immersive digital therapy system, how does the platform transform patient-selected identity archetypes to facilitate internal conflict resolution?",
     "ground_truth": "The AI modifies the selected scenarios using prompts that increase their evocative power, which helps make internal conflicts and blockages more explicit.",
     "gold_pmcid": "PMC13279657",
-    "lexical_overlap": 0.4
+    "lexical_overlap": 0.18
   },
   {
-    "question": "What major thematic areas were identified from interviews about the effects of the COVID\u201119 response on community pharmacy practice?",
-    "ground_truth": "Four themes emerged: (1) the pandemic\u2019s impact on pharmacy practice, (2) its impact on patient health and well\u2011being, (3) its impact on pharmacists\u2019 health and well\u2011being, and (4) recommendations for the post\u2011COVID period.",
+    "question": "What primary analytical categories emerged from qualitative investigations into how COVID-19 operational changes affected community drugstores?",
+    "ground_truth": "Four themes emerged: (1) the pandemic’s impact on pharmacy practice, (2) its impact on patient health and well-being, (3) its impact on pharmacists’ health and well-being, and (4) recommendations for the post-COVID period.",
     "gold_pmcid": "PMC13280592",
-    "lexical_overlap": 0.62
+    "lexical_overlap": 0.25
   },
   {
-    "question": "How do routine blood count\u2013derived inflammatory indices typically change after therapy in psoriasis, atopic dermatitis, and hidradenitis suppurativa?",
-    "ground_truth": "In psoriasis and hidradenitis suppurativa, most CBC\u2011derived markers (e.g., Fas, FasL, soluble Fas, IL\u201121, neutrophil\u2011to\u2011lymphocyte ratio, platelet\u2011to\u2011lymphocyte ratio, systemic immune\u2011inflammation index, systemic inflammation response index, pan\u2011immune\u2011inflammation value, aggregate index of systemic inflammation) are elevated during active disease and decrease following treatment. Evidence for atopic dermatitis is limited; the few reported markers (Fas, FasL, IL\u201121) tend to decline after treatment, while many other indices have no data or show mixed responses.",
+    "question": "Following therapeutic intervention, what general trend is observed in systemic hematological markers across plaque psoriasis, atopic eczema, and acne inversa?",
+    "ground_truth": "In psoriasis and hidradenitis suppurativa, most CBC-derived markers (e.g., Fas, FasL, soluble Fas, IL-21, neutrophil-to-lymphocyte ratio, platelet-to-lymphocyte ratio, systemic immune-inflammation index, systemic inflammation response index, pan-immune-inflammation value, aggregate index of systemic inflammation) are elevated during active disease and decrease following treatment. Evidence for atopic dermatitis is limited; the few reported markers (Fas, FasL, IL-21) tend to decline after treatment, while many other indices have no data or show mixed responses.",
     "gold_pmcid": "PMC13280280",
-    "lexical_overlap": 0.83
+    "lexical_overlap": 0.29
   },
   {
-    "question": "Among non\u2011hospitalized patients with type 2 diabetes, which class of glucose\u2011lowering medication was associated with a reduced risk of neurological sequelae after COVID\u201119 infection?",
-    "ground_truth": "SGLT2 inhibitors were protective against neurological outcomes (p = 0.0041), and this protective effect persisted in a sensitivity analysis using a 90\u2011 to 300\u2011day post\u2011infection window (p = 0.0014).",
+    "question": "Which class of oral antidiabetic agents demonstrated a protective effect against long-term central nervous system complications in outpatient COVID-19 cases?",
+    "ground_truth": "SGLT2 inhibitors were protective against neurological outcomes (p = 0.0041), and this protective effect persisted in a sensitivity analysis using a 90- to 300-day post-infection window (p = 0.0014).",
     "gold_pmcid": "PMC13280275",
-    "lexical_overlap": 0.5
+    "lexical_overlap": 0.21
   },
   {
-    "question": "How does the authors' proposed definition of moderate psoriasis differ from the existing IPC criteria?",
+    "question": "How does the proposed clinical Framework for non-severe plaque disease contrast with established international consensus guidelines?",
     "ground_truth": "The authors' model integrates specific clinical and patient-reported outcomes, making it a more practical definition for real-world practice, whereas the IPC definition primarily focuses on treatment eligibility.",
     "gold_pmcid": "PMC13280063",
-    "lexical_overlap": 0.5
+    "lexical_overlap": 0.15
   },
   {
-    "question": "What proportion of the surveyed female university students were exclusive users of electronic cigarettes?",
-    "ground_truth": "67.8% of the participants reported using e\u2011cigarettes only.",
+    "question": "What percentage of female college survey respondents exclusively consumed electronic nicotine delivery devices?",
+    "ground_truth": "67.8% of the participants reported using e-cigarettes only.",
     "gold_pmcid": "PMC13281501",
-    "lexical_overlap": 0.5
+    "lexical_overlap": 0.14
   },
   {
-    "question": "What maximum neointimal thickness was used to define the group of segments evaluated for diagnostic accuracy?",
-    "ground_truth": "Segments with a maximum histologically measured neointimal thickness of less than 1000\u202f\u03bcm were classified as the thin neointima group and used for the primary diagnostic accuracy assessment.",
+    "question": "What threshold for inner vessel wall lining build-up was established when categorizing segments for diagnostic testing precision?",
+    "ground_truth": "Segments with a maximum histologically measured neointimal thickness of less than 1000 µm were classified as the thin neointima group and used for the primary diagnostic accuracy assessment.",
     "gold_pmcid": "PMC13279681",
-    "lexical_overlap": 0.88
+    "lexical_overlap": 0.24
   },
   {
-    "question": "In the study of 203 twin pregnancies, how many women were classified as underweight, normal weight, overweight, and obese before pregnancy?",
+    "question": "What was the breakdown of pre-pregnancy BMI categories across the cohort of 203 women carrying twins?",
     "ground_truth": "The cohort included 17 underweight, 137 normal weight, 39 overweight, and 10 obese women.",
     "gold_pmcid": "PMC13281350",
-    "lexical_overlap": 0.75
+    "lexical_overlap": 0.27
   },
   {
-    "question": "By how many cases did the automated extraction method undercount minor and major catheter-related mechanical complications compared to the manual review, and what were the absolute percentage differences for each?",
+    "question": "How significantly did algorithmic data harvesting underestimate non-infectious line complications relative to manual chart audits?",
     "ground_truth": "The automated method recorded 30 fewer minor and 4 fewer major complications, corresponding to absolute differences of 0.24 percentage points for minor and 0.032 percentage points for major complications.",
     "gold_pmcid": "PMC13281945",
-    "lexical_overlap": 0.64
+    "lexical_overlap": 0.20
   },
   {
-    "question": "What evidence shows that toothpastes formulated with natural or herbal ingredients can improve gingival health compared with conventional or placebo toothpastes?",
-    "ground_truth": "Multiple randomized clinical trials reported that herbal or natural\u2011ingredient toothpastes (e.g., containing clove, neem, Chinese herbal extracts, hydroxyapatite, ayurvedic herbs, magnolia extract, or Aloe vera) significantly reduced gingival inflammation and bleeding and improved overall gingival health. A meta\u2011analysis of these studies confirmed a statistically significant benefit of natural toothpastes versus control toothpastes (p\u202f=\u202f0.0051).",
+    "question": "What findings substantiate the efficacy of botanical dentifrice formulations in reducing periodontal tissue inflammation relative to standard controls?",
+    "ground_truth": "Multiple randomized clinical trials reported that herbal or natural-ingredient toothpastes (e.g., containing clove, neem, Chinese herbal extracts, hydroxyapatite, ayurvedic herbs, magnolia extract, or Aloe vera) significantly reduced gingival inflammation and bleeding and improved overall gingival health. A meta-analysis of these studies confirmed a statistically significant benefit of natural toothpastes versus control toothpastes (p = 0.0051).",
     "gold_pmcid": "PMC13280788",
-    "lexical_overlap": 0.67
+    "lexical_overlap": 0.28
   },
   {
-    "question": "At approximately what average glycated hemoglobin level did patients experience the lowest risk of cardiovascular and kidney events while on contemporary diabetes medications?",
+    "question": "What long-term glycemic control baseline percentage was associated with optimal cardiorenal safety outcomes among diabetic cohorts?",
     "ground_truth": "The lowest risk was observed at an HbA1c of roughly 7%.",
     "gold_pmcid": "PMC13279632",
-    "lexical_overlap": 0.58
+    "lexical_overlap": 0.19
   },
   {
-    "question": "What false discovery rate threshold was used to define statistical significance when identifying lipidomic markers?",
-    "ground_truth": "Statistical significance was defined as a false discovery rate (FDR) of less than 0.05, using the Benjamini\u2013Hochberg procedure.",
+    "question": "What significance cutoff was applied to control for multiple hypothesis testing when determining differential lipid profiles?",
+    "ground_truth": "Statistical significance was defined as a false discovery rate (FDR) of less than 0.05, using the Benjamini–Hochberg procedure.",
     "gold_pmcid": "PMC13279451",
-    "lexical_overlap": 0.62
+    "lexical_overlap": 0.22
   },
   {
-    "question": "In the MediQuit decision\u2011aid, how are potential drug withdrawal effects communicated to patients?",
-    "ground_truth": "MediQuit makes discussion of withdrawal symptoms optional, tailoring the amount and detail of information to each patient\u2019s preferences, coping capacity, and desired level of detail, thereby balancing transparency with the avoidance of unnecessary anxiety or nocebo effects.",
+    "question": "How does the MediQuit digital tool handle conversations around adverse medication discontinuation phenomena to minimize psychological distress?",
+    "ground_truth": "MediQuit makes discussion of withdrawal symptoms optional, tailoring the amount and detail of information to each patient’s preferences, coping capacity, and desired level of detail, thereby balancing transparency with the avoidance of unnecessary anxiety or nocebo effects.",
     "gold_pmcid": "PMC13281240",
-    "lexical_overlap": 0.83
+    "lexical_overlap": 0.26
   },
   {
-    "question": "In the trial, how did the multicomponent intervention affect the likelihood of patients reaching a high guideline adherence index at six months compared with usual care?",
-    "ground_truth": "The intervention did not increase the likelihood of high guideline adherence; the adjusted odds ratio was 1.12 (95%\u202fCI\u202f0.86\u20131.45, P\u202f=\u202f0.37), and the proportion achieving it was 49.6% versus 44.6% in usual care (absolute difference 5.0%, P\u202f=\u202f0.12), which was not statistically significant.",
+    "question": "Did the bundled clinical strategy significantly improve six-month target treatment compliance relative to standard practice protocols?",
+    "ground_truth": "The intervention did not increase the likelihood of high guideline adherence; the adjusted odds ratio was 1.12 (95% CI 0.86–1.45, P = 0.37), and the proportion achieving it was 49.6% versus 44.6% in usual care (absolute difference 5.0%, P = 0.12), which was not statistically significant.",
     "gold_pmcid": "PMC13279453",
-    "lexical_overlap": 0.44
+    "lexical_overlap": 0.17
   },
   {
-    "question": "What proportion of male patients in the UKD cohort died within 100 days after transplantation?",
+    "question": "What was the short-term post-transplant mortality rate among male subjects in the UK primary renal registry?",
     "ground_truth": "In the UKD cohort, 49 out of 519 male patients died within 100 days, corresponding to a mortality rate of 9.4%.",
     "gold_pmcid": "PMC13280382",
-    "lexical_overlap": 0.5
+    "lexical_overlap": 0.21
   },
   {
-    "question": "Which oxidative\u2011damage marker was observed to be increased in neural progenitor cells that showed reduced mitochondrial protein expression in the subventricular zone of the embryonic mouse neural tube?",
-    "ground_truth": "Immunohistochemical staining revealed that NPCs with high levels of 8\u2011hydroxyguanine (8\u2011OHG), a marker of oxidative DNA damage, exhibited low expression of the mitochondrial protein TOMM20 in the subventricular zone.",
+    "question": "Which cellular marker of reactive oxygen species accumulation was elevated in neuroblasts exhibiting compromised bioenergetic machinery within embryonic brain tissue?",
+    "ground_truth": "Immunohistochemical staining revealed that NPCs with high levels of 8-hydroxyguanine (8-OHG), a marker of oxidative DNA damage, exhibited low expression of the mitochondrial protein TOMM20 in the subventricular zone.",
     "gold_pmcid": "PMC13281627",
-    "lexical_overlap": 0.57
+    "lexical_overlap": 0.23
   },
   {
-    "question": "What care delivery model is recommended for Hidradenitis Suppurativa competence centers to coordinate advanced diagnostics and treatments?",
-    "ground_truth": "They should operate on a hub\u2011and\u2011spoke model in which frontline healthcare providers refer patients to specialized centers for comprehensive care.",
+    "question": "What organizational framework is advocated for dedicated referral centers managing complex severe dermatological conditions?",
+    "ground_truth": "They should operate on a hub-and-spoke model in which frontline healthcare providers refer patients to specialized centers for comprehensive care.",
     "gold_pmcid": "PMC13280284",
-    "lexical_overlap": 0.7
+    "lexical_overlap": 0.16
   },
   {
-    "question": "What change in Rho activity at the rear of primary human T cells is observed when the cells are treated with an mTORC2 inhibitor during CCL19 stimulation compared to untreated cells?",
-    "ground_truth": "Rho activity at the cell back is reduced in cells treated with 10\u202f\u00b5M mTORC2 inhibitor KU relative to control cells after addition of 25\u202fnM CCL19.",
+    "question": "How does targeted pharmacological blockade of the mTOR complex alter back-end cytoskeletal dynamics in chemo-stimulated T lymphocytes?",
+    "ground_truth": "Rho activity at the cell back is reduced in cells treated with 10 µM mTORC2 inhibitor KU relative to control cells after addition of 25 nM CCL19.",
     "gold_pmcid": "PMC13279283",
-    "lexical_overlap": 0.6
+    "lexical_overlap": 0.19
   }
 ]
