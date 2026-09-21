@@ -89,7 +89,7 @@ The test set is generated *from the corpus itself* - questions are derived from 
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/hybrid-rag-biomedical.git
+git clone https://github.com/hyandri/hybrid-rag-biomedical.git
 cd hybrid-rag-biomedical
 
 conda create -n hybrid_rag python=3.11 -y
